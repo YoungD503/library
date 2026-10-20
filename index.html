@@ -425,7 +425,7 @@ const GUIDES = [
     title: "The Starter Guide", title_es: "Guía para empezar",
     desc: "Everything you need to get started, in one place.",
     desc_es: "Todo lo que necesitas para empezar, en un solo lugar." },
- /* { id: "planning-tmpl", category: "Templates", type: "XLSX", size: "48 KB", file: "files/planning-template.xlsx",
+  /*{ id: "planning-tmpl", category: "Templates", type: "XLSX", size: "48 KB", file: "files/planning-template.xlsx",
     title: "Monthly Planner", title_es: "Planificador mensual",
     desc: "A ready-to-use planner to set goals and track progress.",
     desc_es: "Un planificador listo para fijar metas y seguir tu progreso." },
@@ -433,11 +433,11 @@ const GUIDES = [
     title: "Launch Checklist", title_es: "Lista de lanzamiento",
     desc: "A step-by-step list so nothing slips through the cracks.",
     desc_es: "Una lista paso a paso para que no se te escape nada." },
- */ { id: "advanced-guide", category: "Guides", type: "PDF", size: "4.8 MB", file: "files/advanced-playbook.pdf",
+  */{ id: "advanced-guide", category: "Guides", type: "PDF", size: "4.8 MB", file: "files/advanced-playbook.pdf",
     title: "Advanced Playbook", title_es: "Manual avanzado",
     desc: "Deeper strategies and real examples for leveling up.",
     desc_es: "Estrategias más profundas y ejemplos reales para subir de nivel." },
- /* { id: "email-templates", category: "Templates", type: "DOCX", size: "90 KB", file: "files/email-templates.docx",
+  /*{ id: "email-templates", category: "Templates", type: "DOCX", size: "90 KB", file: "files/email-templates.docx",
     title: "Email Templates", title_es: "Plantillas de correo",
     desc: "Copy-and-paste emails for the most common situations.",
     desc_es: "Correos listos para copiar y pegar en las situaciones más comunes." },
@@ -445,7 +445,7 @@ const GUIDES = [
     title: "Weekly Review", title_es: "Revisión semanal",
     desc: "A 15-minute routine to review your week and plan the next.",
     desc_es: "Una rutina de 15 minutos para revisar tu semana y planear la siguiente." }
-*/  ];
+*/   ];
 
 /* Spanish names for your categories */
 const CATEGORY_ES = { Guides: "Guías", Templates: "Plantillas", Checklists: "Listas" };
@@ -553,6 +553,64 @@ if (user && !user.pass) { user.pass = String(Math.floor(1000 + Math.random() * 9
 
 let lang = safe.get(LANG_KEY) || ((navigator.language || "en").toLowerCase().startsWith("es") ? "es" : "en");
 if (!I18N[lang]) lang = "en";
+
+/* ---------- Tracking (anonymous visitor ID + where people come from) ---------- */
+const VISITOR_KEY = "library_vid";
+const SOURCE_KEY = "library_src";
+const isReturning = !!safe.get(VISITOR_KEY);
+const visitorId = safe.get(VISITOR_KEY) || (Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+safe.set(VISITOR_KEY, visitorId);
+
+function deviceInfo() {
+  const ua = navigator.userAgent;
+  const iPadOS = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+  const device = iPadOS || /iPad|Tablet|Android(?!.*Mobile)/i.test(ua) ? "Tablet" : /Mobi|iPhone|iPod|Android/i.test(ua) ? "Mobile" : "Desktop";
+  const browser = /Edg\//.test(ua) ? "Edge" : /OPR\/|Opera/.test(ua) ? "Opera" : /SamsungBrowser/.test(ua) ? "Samsung Internet"
+    : /Instagram/.test(ua) ? "Instagram app" : /FBAN|FBAV/.test(ua) ? "Facebook app" : /TikTok|musical_ly/i.test(ua) ? "TikTok app"
+    : /CriOS|Chrome\//.test(ua) ? "Chrome" : /FxiOS|Firefox\//.test(ua) ? "Firefox" : /Safari\//.test(ua) ? "Safari" : "Other";
+  const os = /Windows/.test(ua) ? "Windows" : (iPadOS || /iPhone|iPad|iPod/.test(ua)) ? "iOS" : /Android/.test(ua) ? "Android"
+    : /CrOS/.test(ua) ? "ChromeOS" : /Mac OS X/.test(ua) ? "macOS" : /Linux/.test(ua) ? "Linux" : "Other";
+  return { device, browser, os };
+}
+
+/* Remembers where the visitor first came from (UTM link, other website, or direct) */
+function trafficSource() {
+  let src = null;
+  try { src = JSON.parse(safe.get(SOURCE_KEY)); } catch {}
+  const u = new URLSearchParams(location.search);
+  if (!src || u.get("utm_source")) {
+    let ref = "";
+    try { ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, "") : ""; } catch {}
+    if (ref && ref === location.hostname.replace(/^www\./, "")) ref = "";
+    src = {
+      source: u.get("utm_source") || ref || "direct",
+      medium: u.get("utm_medium") || (ref ? "referral" : "none"),
+      campaign: u.get("utm_campaign") || "",
+      referrer: document.referrer || "",
+      landing: location.href
+    };
+    safe.set(SOURCE_KEY, JSON.stringify(src));
+  }
+  return src;
+}
+
+function ctx() {
+  const d = deviceInfo(), s = trafficSource();
+  let region = "", timezone = "";
+  try { region = new Intl.Locale(navigator.language).region || ""; } catch {}
+  try { timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch {}
+  return {
+    visitorId, lang, device: d.device, browser: d.browser, os: d.os, timezone, region,
+    source: s.source, medium: s.medium, campaign: s.campaign, referrer: s.referrer, landing: s.landing,
+    screen: `${screen.width}x${screen.height}`, page: location.href
+  };
+}
+
+function trackVisit() {
+  if (SCRIPT_URL.startsWith("PASTE")) return;
+  try { if (sessionStorage.getItem("library_visit")) return; sessionStorage.setItem("library_visit", "1"); } catch {}
+  send({ action: "visit", returning: isReturning ? "yes" : "no", signedUp: user ? "yes" : "no", ...ctx() });
+}
 
 let pendingGuide = null;
 let activeCat = "All";
@@ -704,7 +762,7 @@ function unlockShelf() {
 
 function download(g) {
   const file = gFile(g);
-  send({ action: "download", email: user.email, name: user.name, guideId: g.id, guideTitle: g.title, page: location.href, lang });
+  if (!SCRIPT_URL.startsWith("PASTE")) send({ action: "download", email: user.email, name: user.name, guideId: g.id, guideTitle: g.title, ...ctx() });
   const a = document.createElement("a");
   a.href = file; a.target = "_blank"; a.rel = "noopener";
   if (!/^https?:/i.test(file)) a.download = "";
@@ -727,8 +785,8 @@ $("signupForm").addEventListener("submit", async (e) => {
     const role = (f.querySelector("input[name=role]:checked") || {}).value || "";
     await send({
       action: "signup", name, email, role, consent: f.consent.checked ? "yes" : "no",
-      guideId: pendingGuide ? pendingGuide.id : "", page: location.href,
-      referrer: document.referrer, userAgent: navigator.userAgent, lang
+      guideId: pendingGuide ? pendingGuide.id : "", guideTitle: pendingGuide ? pendingGuide.title : "",
+      userAgent: navigator.userAgent, ...ctx()
     });
     user = { name, email, pass: String(Math.floor(1000 + Math.random() * 9000)) };
     safe.set(STORAGE_KEY, JSON.stringify(user));
@@ -777,6 +835,7 @@ $("year").textContent = new Date().getFullYear();
 renderAll();
 countUp($("statCount"), GUIDES.length);
 countUp($("statCats"), new Set(GUIDES.map(g => g.category)).size);
+trackVisit();
 if (!user && AUTO_OPEN_DELAY >= 0) setTimeout(() => openModal(), AUTO_OPEN_DELAY);
 </script>
 </body>
