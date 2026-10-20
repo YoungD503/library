@@ -160,6 +160,50 @@
   .dl.locked:hover { background: var(--orange); color: var(--white); }
   .empty { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px; }
 
+  /* ---------- Reviews ---------- */
+  .rv-summary { display: flex; align-items: center; gap: 14px; }
+  .rv-avg { font: 800 3.2rem/1 var(--display); color: var(--forest); }
+  .stars { color: var(--orange); letter-spacing: 2px; font-size: 1.1rem; white-space: nowrap; }
+  .stars .off { color: #d6e2da; }
+  .rv-summary small { display: block; color: var(--muted); font-size: .85rem; }
+  .rv-grid { columns: 3 270px; column-gap: 20px; }
+  .rv { break-inside: avoid; background: var(--white); border: 1.5px solid var(--line); border-radius: var(--r); padding: 24px; margin: 0 0 20px; position: relative; animation: rise .5s both; }
+  .rv:nth-child(3n+2) { background: var(--mint); border-color: transparent; }
+  .rv:nth-child(3n) { background: var(--peach); border-color: transparent; }
+  .rv::before { content: "“"; position: absolute; top: 8px; right: 20px; font: 4.5rem/1 var(--serif); color: var(--orange); opacity: .35; }
+  .rv-text { margin: 12px 0 18px; color: var(--ink); white-space: pre-line; overflow-wrap: anywhere; }
+  .rv-foot { display: flex; align-items: center; gap: 10px; }
+  .rv-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--forest); color: var(--white); display: grid; place-items: center; font: 800 .95rem var(--display); flex-shrink: 0; }
+  .rv:nth-child(3n+2) .rv-avatar { background: var(--orange); }
+  .rv-foot strong { display: block; font-size: .92rem; color: var(--forest); line-height: 1.2; }
+  .rv-foot small { color: var(--muted); font-size: .8rem; }
+  .rv-empty { border: 2px dashed var(--line); border-radius: var(--r); padding: 44px 24px; text-align: center; color: var(--muted); column-span: all; }
+  .rv-empty b { display: block; font-size: 2rem; color: var(--orange); margin-bottom: 6px; letter-spacing: 4px; }
+  .rv-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+  .meta .rate { color: #c94a07; font-weight: 600; }
+
+  .rv-card { width: 100%; max-width: 520px; max-height: 100%; overflow-y: auto; background: var(--white); border-radius: 26px; padding: 30px 32px; border-top: 6px solid var(--orange); box-shadow: 0 30px 80px rgba(0,0,0,.3); animation: drop .55s cubic-bezier(.2,1.2,.3,1); }
+  .rv-card .ticket-top { margin: -10px -12px 10px 0; }
+  .rv-badge { font: 800 .85rem var(--display); color: var(--orange); letter-spacing: .06em; }
+  .rv-card h2 { font-size: 1.9rem; font-weight: 800; color: var(--forest); }
+  .rv-card h2 em { color: var(--orange); }
+  .rv-card .sub { color: var(--muted); margin: 8px 0 20px; }
+  .rv-card .btn { width: 100%; }
+  .stars-input { display: inline-flex; flex-direction: row-reverse; gap: 4px; }
+  .field .stars-input input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+  .stars-input label { font-size: 2.3rem; line-height: 1; color: #d6e2da; cursor: pointer; transition: transform .15s, color .15s; }
+  .stars-input label:hover { transform: scale(1.15); }
+  .stars-input input:checked ~ label, .stars-input label:hover, .stars-input label:hover ~ label { color: var(--orange); }
+  .stars-input input:focus-visible + label { outline: 2px solid var(--green); border-radius: 6px; }
+  .field select, .field textarea { width: 100%; padding: 13px 15px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--paper); color: var(--ink); font: 1rem var(--body); transition: .2s; }
+  .field textarea { resize: vertical; min-height: 110px; }
+  .field select:focus, .field textarea:focus { outline: 0; border-color: var(--green); background: var(--white); box-shadow: 0 0 0 4px var(--mint); }
+  .count { text-align: right; font-size: .75rem; color: var(--muted); margin-top: 4px; }
+  .rv-done { display: none; text-align: center; padding: 10px 0 4px; }
+  .rv-card.done .rv-form-view { display: none; }
+  .rv-card.done .rv-done { display: block; }
+  .big-star { display: block; font-size: 4.5rem; line-height: 1; color: var(--orange); margin-bottom: 10px; animation: stamp .5s cubic-bezier(.2,1.6,.4,1); }
+
   /* ---------- CTA band ---------- */
   .cta { margin: 100px 0 60px; background: var(--forest); color: var(--white); border-radius: 32px; padding: 64px 40px; text-align: center; position: relative; overflow: hidden; }
   .cta::before, .cta::after { content: ""; position: absolute; border-radius: 50%; }
@@ -263,6 +307,8 @@
     .info p { font-size: .85rem; }
     .info-row { flex-direction: column; align-items: flex-start; gap: 8px; }
     .dl { width: 100%; justify-content: center; padding: 9px 12px; }
+    .rv-card { padding: 24px 20px; }
+    .rv-avg { font-size: 2.6rem; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -337,6 +383,18 @@
     <div class="shelf" id="shelf"></div>
   </section>
 
+  <section class="section" id="reviews">
+    <div class="lib-head">
+      <h2 class="section-title" data-i18n-html="rvTitle"></h2>
+      <div class="rv-summary" id="rvSummary"></div>
+    </div>
+    <div class="rv-grid" id="rvGrid"></div>
+    <div class="rv-actions">
+      <button class="btn btn-line" id="rvMore" style="display:none" data-i18n="rvMore"></button>
+      <button class="btn btn-orange" id="rvOpen"><span data-i18n="rvLeave"></span> ★</button>
+    </div>
+  </section>
+
   <section class="cta">
     <h2 data-i18n-html="ctaTitle"></h2>
     <p data-i18n="ctaText"></p>
@@ -403,13 +461,56 @@
   </div>
 </div>
 
+<!-- Review modal -->
+<div class="overlay" id="rvOverlay" role="dialog" aria-modal="true" aria-labelledby="rvModalTitle">
+  <div class="rv-card" id="rvCard">
+    <div class="ticket-top">
+      <span class="rv-badge">YO ★</span>
+      <button class="close" id="rvClose" aria-label="Close">×</button>
+    </div>
+    <div class="rv-form-view">
+      <h2 id="rvModalTitle" data-i18n-html="rvModalTitle"></h2>
+      <p class="sub" data-i18n="rvModalSub"></p>
+      <form id="rvForm" novalidate>
+        <div class="field">
+          <label data-i18n="rvRating"></label>
+          <div class="stars-input" role="radiogroup">
+            <input type="radio" id="st5" name="rating" value="5"><label for="st5" title="5">★</label>
+            <input type="radio" id="st4" name="rating" value="4"><label for="st4" title="4">★</label>
+            <input type="radio" id="st3" name="rating" value="3"><label for="st3" title="3">★</label>
+            <input type="radio" id="st2" name="rating" value="2"><label for="st2" title="2">★</label>
+            <input type="radio" id="st1" name="rating" value="1"><label for="st1" title="1">★</label>
+          </div>
+        </div>
+        <div class="field"><label for="rvGuide" data-i18n="rvAbout"></label><select id="rvGuide"></select></div>
+        <div class="field">
+          <label for="rvText" data-i18n="rvText"></label>
+          <textarea id="rvText" maxlength="500" data-i18n-ph="rvTextPh"></textarea>
+          <div class="count"><span id="rvCount">0</span>/500</div>
+        </div>
+        <div class="field"><label for="rvName" data-i18n="rvName"></label><input id="rvName" maxlength="40" autocomplete="off"></div>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="check"><input type="checkbox" name="agree"><span data-i18n="rvConsent"></span></label>
+        <p class="error" id="rvError"></p>
+        <button class="btn btn-orange" type="submit" id="rvSubmit" data-i18n="rvSubmit"></button>
+      </form>
+    </div>
+    <div class="rv-done">
+      <span class="big-star">★</span>
+      <h2 data-i18n-html="rvThanks"></h2>
+      <p class="sub" data-i18n="rvThanksSub"></p>
+      <button class="btn btn-line" id="rvDoneBtn" data-i18n="rvDone"></button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 /* =====================================================================
    1) PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
    ===================================================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiiQXDBSpocK8JUTcOb_WGb5wthbADoX0Q5i__HbmoHaLSvkL8HRJcsprwQc0pToXa/exec";
+const SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
 
 /* =====================================================================
    2) EDIT YOUR GUIDES HERE
@@ -425,7 +526,7 @@ const GUIDES = [
     title: "The Starter Guide", title_es: "Guía para empezar",
     desc: "Everything you need to get started, in one place.",
     desc_es: "Todo lo que necesitas para empezar, en un solo lugar." },
-  /*{ id: "planning-tmpl", category: "Templates", type: "XLSX", size: "48 KB", file: "files/planning-template.xlsx",
+  { id: "planning-tmpl", category: "Templates", type: "XLSX", size: "48 KB", file: "files/planning-template.xlsx",
     title: "Monthly Planner", title_es: "Planificador mensual",
     desc: "A ready-to-use planner to set goals and track progress.",
     desc_es: "Un planificador listo para fijar metas y seguir tu progreso." },
@@ -433,11 +534,11 @@ const GUIDES = [
     title: "Launch Checklist", title_es: "Lista de lanzamiento",
     desc: "A step-by-step list so nothing slips through the cracks.",
     desc_es: "Una lista paso a paso para que no se te escape nada." },
-  */{ id: "advanced-guide", category: "Guides", type: "PDF", size: "4.8 MB", file: "files/advanced-playbook.pdf",
+  { id: "advanced-guide", category: "Guides", type: "PDF", size: "4.8 MB", file: "files/advanced-playbook.pdf",
     title: "Advanced Playbook", title_es: "Manual avanzado",
     desc: "Deeper strategies and real examples for leveling up.",
     desc_es: "Estrategias más profundas y ejemplos reales para subir de nivel." },
-  /*{ id: "email-templates", category: "Templates", type: "DOCX", size: "90 KB", file: "files/email-templates.docx",
+  { id: "email-templates", category: "Templates", type: "DOCX", size: "90 KB", file: "files/email-templates.docx",
     title: "Email Templates", title_es: "Plantillas de correo",
     desc: "Copy-and-paste emails for the most common situations.",
     desc_es: "Correos listos para copiar y pegar en las situaciones más comunes." },
@@ -445,7 +546,7 @@ const GUIDES = [
     title: "Weekly Review", title_es: "Revisión semanal",
     desc: "A 15-minute routine to review your week and plan the next.",
     desc_es: "Una rutina de 15 minutos para revisar tu semana y planear la siguiente." }
-*/   ];
+];
 
 /* Spanish names for your categories */
 const CATEGORY_ES = { Guides: "Guías", Templates: "Plantillas", Checklists: "Listas" };
@@ -494,7 +595,21 @@ const I18N = {
     vol: "Vol.", free: "Free", unlock: "Unlock", download: "Download",
     empty: "No guides match “{q}”. Try another word.",
     downloading: "Downloading “{title}”",
-    signOut: "Sign out of your library pass on this device?"
+    signOut: "Sign out of your library pass on this device?",
+    rvTitle: "Loved by <em>readers</em>", rvLeave: "Leave a review", rvMore: "See more reviews",
+    rvCount: "{n} reviews", rvCount1: "1 review", rvAnon: "YO reader",
+    rvEmpty: "No reviews yet. Be the first to share what you think!",
+    rvModalTitle: "Share your <em>thoughts</em>", rvModalSub: "Your review helps others find the right guide.",
+    rvRating: "Your rating", rvAbout: "What are you reviewing?", rvWhole: "The whole library",
+    rvText: "Your review", rvTextPh: "What did you like? How did it help you?",
+    rvName: "Name to show", rvConsent: "I agree that my review and name may be shown on this site.",
+    rvSubmit: "Send review", rvSending: "Sending…",
+    rvErrRating: "Please choose a star rating.", rvErrText: "Please write at least a few words.",
+    rvErrConsent: "Please tick the box to agree.",
+    rvThanks: "Thank <em>you!</em>", rvThanksSub: "Your review will appear on the page once it's approved.",
+    rvDone: "Back to the library", starsLabel: "{n} out of 5 stars",
+    modalSubReview: "Activate your free pass to leave a review — and unlock every guide too.",
+    rvWriteNow: "Write my review"
   },
   es: {
     docTitle: "YO · Young Organize — Biblioteca gratuita",
@@ -533,7 +648,21 @@ const I18N = {
     vol: "Vol.", free: "Gratis", unlock: "Desbloquear", download: "Descargar",
     empty: "Ninguna guía coincide con “{q}”. Prueba otra palabra.",
     downloading: "Descargando “{title}”",
-    signOut: "¿Cerrar tu pase de biblioteca en este dispositivo?"
+    signOut: "¿Cerrar tu pase de biblioteca en este dispositivo?",
+    rvTitle: "Lo que dicen nuestros <em>lectores</em>", rvLeave: "Deja tu reseña", rvMore: "Ver más reseñas",
+    rvCount: "{n} reseñas", rvCount1: "1 reseña", rvAnon: "Lector YO",
+    rvEmpty: "Aún no hay reseñas. ¡Sé la primera persona en opinar!",
+    rvModalTitle: "Comparte tu <em>opinión</em>", rvModalSub: "Tu reseña ayuda a otros a encontrar la guía correcta.",
+    rvRating: "Tu calificación", rvAbout: "¿Qué estás reseñando?", rvWhole: "Toda la biblioteca",
+    rvText: "Tu reseña", rvTextPh: "¿Qué te gustó? ¿Cómo te ayudó?",
+    rvName: "Nombre que se mostrará", rvConsent: "Acepto que mi reseña y mi nombre se muestren en este sitio.",
+    rvSubmit: "Enviar reseña", rvSending: "Enviando…",
+    rvErrRating: "Elige una calificación de estrellas.", rvErrText: "Escribe al menos unas palabras.",
+    rvErrConsent: "Marca la casilla para aceptar.",
+    rvThanks: "¡<em>Gracias!</em>", rvThanksSub: "Tu reseña aparecerá en la página cuando sea aprobada.",
+    rvDone: "Volver a la biblioteca", starsLabel: "{n} de 5 estrellas",
+    modalSubReview: "Activa tu pase gratis para dejar una reseña y desbloquear todas las guías.",
+    rvWriteNow: "Escribir mi reseña"
   }
 };
 
@@ -613,6 +742,9 @@ function trackVisit() {
 }
 
 let pendingGuide = null;
+let pendingAction = null;   // "review" when someone clicked "Leave a review" before signing up
+let reviews = [];           // approved reviews loaded from the Sheet
+let showAllReviews = false;
 let activeCat = "All";
 let query = "";
 
@@ -681,6 +813,7 @@ function renderChips() {
 
 function renderShelf() {
   const q = query.toLowerCase();
+  const ratings = guideRatings();
   const list = GUIDES.map((g, i) => ({ g, i })).filter(({ g }) =>
     (activeCat === "All" || g.category === activeCat) &&
     (!q || [g.title, g.title_es, g.desc, g.desc_es, g.category, CATEGORY_ES[g.category]].join(" ").toLowerCase().includes(q)));
@@ -695,7 +828,7 @@ function renderShelf() {
       <div class="info">
         <p>${esc(gDesc(g))}</p>
         <div class="info-row">
-          <span class="meta">${esc(g.type)} · ${esc(g.size)}</span>
+          <span class="meta">${esc(g.type)} · ${esc(g.size)}${ratings[g.id] ? ` · <span class="rate" title="${esc(t("starsLabel", { n: ratings[g.id] }))}">★ ${ratings[g.id]}</span>` : ""}</span>
           <button class="dl ${user ? "" : "locked"}" data-id="${esc(g.id)}">${user ? ICON.dl + esc(t("download")) : ICON.lock.replace(/20/g, "15") + esc(t("unlock"))}</button>
         </div>
       </div>
@@ -703,15 +836,95 @@ function renderShelf() {
 }
 
 function renderModalText() {
-  $("modalSub").textContent = pendingGuide ? t("modalSubGuide", { title: gTitle(pendingGuide) }) : t("modalSub");
+  $("modalSub").textContent = pendingAction === "review" ? t("modalSubReview")
+    : pendingGuide ? t("modalSubGuide", { title: gTitle(pendingGuide) }) : t("modalSub");
   $("welcome").innerHTML = t("welcome", { name: esc(firstName()) });
   const sd = $("successDownload");
-  if (pendingGuide) { sd.style.display = ""; sd.innerHTML = ICON.dl + esc(t("downloadThis", { title: gTitle(pendingGuide) })); }
+  if (pendingAction === "review") { sd.style.display = ""; sd.innerHTML = "★ " + esc(t("rvWriteNow")); }
+  else if (pendingGuide) { sd.style.display = ""; sd.innerHTML = ICON.dl + esc(t("downloadThis", { title: gTitle(pendingGuide) })); }
   else sd.style.display = "none";
 }
 
+/* ---------- Reviews ---------- */
+function starsHTML(n) {
+  let s = "";
+  for (let i = 1; i <= 5; i++) s += `<span class="${i <= Math.round(n) ? "" : "off"}">★</span>`;
+  return `<span class="stars" role="img" aria-label="${esc(t("starsLabel", { n: Math.round(n * 10) / 10 }))}">${s}</span>`;
+}
+
+/* Average rating per guide, e.g. { "starter-guide": "4.8" } */
+function guideRatings() {
+  const sums = {};
+  reviews.forEach(r => { if (!r.guideId) return; (sums[r.guideId] ||= []).push(Number(r.rating) || 0); });
+  const out = {};
+  Object.keys(sums).forEach(id => { const a = sums[id]; out[id] = (a.reduce((x, y) => x + y, 0) / a.length).toFixed(1); });
+  return out;
+}
+
+function renderReviews() {
+  const n = reviews.length;
+  if (!n) {
+    $("rvSummary").innerHTML = "";
+    $("rvGrid").innerHTML = `<div class="rv-empty"><b>★★★★★</b>${esc(t("rvEmpty"))}</div>`;
+    $("rvMore").style.display = "none";
+    return;
+  }
+  const avg = reviews.reduce((a, r) => a + (Number(r.rating) || 0), 0) / n;
+  $("rvSummary").innerHTML = `<span class="rv-avg">${avg.toFixed(1)}</span><div>${starsHTML(avg)}<small>${esc(n === 1 ? t("rvCount1") : t("rvCount", { n }))}</small></div>`;
+  let fmt = null;
+  try { fmt = new Intl.DateTimeFormat(lang, { month: "short", year: "numeric" }); } catch {}
+  const list = showAllReviews ? reviews : reviews.slice(0, 6);
+  $("rvGrid").innerHTML = list.map((r, k) => {
+    const g = GUIDES.find(x => x.id === r.guideId);
+    const about = g ? gTitle(g) : (r.guideTitle || t("rvWhole"));
+    const name = String(r.name || "").trim() || t("rvAnon");
+    let date = "";
+    try { date = fmt ? fmt.format(new Date(r.date)) : ""; } catch {}
+    return `<article class="rv" style="animation-delay:${k * 60}ms">
+      ${starsHTML(Number(r.rating) || 0)}
+      <p class="rv-text">${esc(r.text)}</p>
+      <div class="rv-foot"><span class="rv-avatar">${esc(name.charAt(0).toUpperCase())}</span>
+        <div><strong>${esc(name)}</strong><small>${esc(about)}${date ? " · " + esc(date) : ""}</small></div></div>
+    </article>`;
+  }).join("");
+  $("rvMore").style.display = n > 6 && !showAllReviews ? "" : "none";
+}
+
+async function loadReviews() {
+  if (!SCRIPT_URL.startsWith("PASTE")) {
+    try {
+      const res = await fetch(SCRIPT_URL + "?action=reviews");
+      const data = await res.json();
+      if (data && data.ok && Array.isArray(data.reviews)) reviews = data.reviews;
+    } catch {}
+  }
+  renderReviews(); renderShelf();
+}
+
+function fillGuideSelect() {
+  const sel = $("rvGuide"), current = sel.value;
+  sel.innerHTML = `<option value="">${esc(t("rvWhole"))}</option>` +
+    GUIDES.map(g => `<option value="${esc(g.id)}">${esc(gTitle(g))}</option>`).join("");
+  sel.value = current;
+}
+
+function openReview(guideId) {
+  if (!user) return openModal(null, "review");
+  $("rvCard").classList.remove("done");
+  $("rvError").textContent = "";
+  fillGuideSelect();
+  if (guideId) $("rvGuide").value = guideId;
+  if (!$("rvName").value) {
+    const parts = user.name.trim().split(/\s+/);
+    $("rvName").value = parts[0] + (parts[1] ? " " + parts[1].charAt(0).toUpperCase() + "." : "");
+  }
+  $("rvOverlay").classList.add("open");
+}
+function closeReview() { $("rvOverlay").classList.remove("open"); }
+
 function renderAll() {
   applyStatic(); renderNav(); renderStack(); renderMarquee(); renderChips(); renderShelf(); renderModalText();
+  renderReviews(); fillGuideSelect();
 }
 
 function setLang(l) {
@@ -727,9 +940,10 @@ function countUp(el, to) {
 }
 
 /* ---------- Modal ---------- */
-function openModal(guide) {
+function openModal(guide, action) {
   if (user) return;
   pendingGuide = guide || null;
+  pendingAction = action || null;
   $("ticket").classList.remove("done");
   $("formError").textContent = "";
   renderModalText();
@@ -824,11 +1038,52 @@ $("passBtn").addEventListener("click", () => {
   if (!user) return openModal();
   if (confirm(t("signOut"))) { safe.del(STORAGE_KEY); user = null; renderNav(); renderShelf(); }
 });
-$("successDownload").addEventListener("click", () => { if (pendingGuide) download(pendingGuide); closeModal(); });
+$("successDownload").addEventListener("click", () => {
+  closeModal();
+  if (pendingAction === "review") return openReview();
+  if (pendingGuide) download(pendingGuide);
+});
+
+/* Review events */
+$("rvOpen").addEventListener("click", () => openReview());
+$("rvMore").addEventListener("click", () => { showAllReviews = true; renderReviews(); });
+$("rvClose").addEventListener("click", closeReview);
+$("rvDoneBtn").addEventListener("click", closeReview);
+$("rvOverlay").addEventListener("click", (e) => { if (e.target.id === "rvOverlay") closeReview(); });
+$("rvText").addEventListener("input", (e) => { $("rvCount").textContent = e.target.value.length; });
+$("rvForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const err = (m) => { $("rvError").textContent = m; };
+  if (f.website.value) return;
+  const rating = (f.querySelector("input[name=rating]:checked") || {}).value;
+  const text = $("rvText").value.trim();
+  if (!rating) return err(t("rvErrRating"));
+  if (text.length < 5) return err(t("rvErrText"));
+  if (!f.agree.checked) return err(t("rvErrConsent"));
+  if (SCRIPT_URL.startsWith("PASTE")) return err(t("errSetup"));
+
+  const btn = $("rvSubmit"); btn.disabled = true; btn.textContent = t("rvSending");
+  try {
+    const gid = $("rvGuide").value;
+    const g = GUIDES.find(x => x.id === gid);
+    await send({
+      action: "review", email: user.email, name: $("rvName").value.trim() || firstName(),
+      rating, text, guideId: gid, guideTitle: g ? g.title : "", ...ctx()
+    });
+    $("rvCard").classList.add("done");
+    f.reset(); $("rvCount").textContent = "0";
+    confetti();
+  } catch {
+    err(t("errNet"));
+  } finally {
+    btn.disabled = false; btn.textContent = t("rvSubmit");
+  }
+});
 $("successBrowse").addEventListener("click", () => { closeModal(); $("library").scrollIntoView({ behavior: "smooth" }); });
 $("closeModal").addEventListener("click", closeModal);
 $("overlay").addEventListener("click", (e) => { if (e.target.id === "overlay") closeModal(); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeModal(); closeReview(); } });
 
 /* ---------- Init ---------- */
 $("year").textContent = new Date().getFullYear();
@@ -836,6 +1091,7 @@ renderAll();
 countUp($("statCount"), GUIDES.length);
 countUp($("statCats"), new Set(GUIDES.map(g => g.category)).size);
 trackVisit();
+loadReviews();
 if (!user && AUTO_OPEN_DELAY >= 0) setTimeout(() => openModal(), AUTO_OPEN_DELAY);
 </script>
 </body>
